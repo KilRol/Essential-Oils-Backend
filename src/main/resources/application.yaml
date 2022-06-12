@@ -1,0 +1,14 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/essential-oils
+    username: postgres
+    password: kilrol
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: true
