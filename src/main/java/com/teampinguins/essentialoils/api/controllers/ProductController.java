@@ -37,9 +37,30 @@ public class ProductController {
 
 
     private static final int subTokenLength = 4;
-    private static final double ThresholdWord = 0.45;
+    private static final double ThresholdWord = 0.35;
     private static final int MinWordLength = 2;
-    private static final double ThresholdSentence = 0.25;
+
+
+    private String NormalizeSentence(String sentence) {
+        var resultContainer = new StringBuilder(100);
+        CharSequence lowerSentece = sentence.toLowerCase();
+        for (int i = 0; i < lowerSentece.length(); i++) {
+            if (IsNormalChar(lowerSentece.charAt(i))) {
+                resultContainer.append(lowerSentece.charAt(i));
+            }
+        }
+
+        return resultContainer.toString();
+    }
+
+    /// <summary>
+/// Возвращает признак подходящего символа.
+/// </summary>
+/// <param name="c">Символ.</param>
+/// <returns>True - если символ буква или цифра или пробел, False - иначе.</returns>
+    private boolean IsNormalChar(char c) {
+        return Character.isLetterOrDigit(c) || c == ' ';
+    }
 
     private ArrayList<String> GetTokens(String sentence) {
         var tokens = new ArrayList<String>();
@@ -54,6 +75,9 @@ public class ProductController {
 
     private boolean IsTokensFuzzyEqual(String firstToken, String secondToken) {
         int equalSubtokensCount = 0;
+        if (secondToken.length() - subTokenLength + 1 <= 0) {
+            return false;
+        }
         boolean[] usedTokens = new boolean[secondToken.length() - subTokenLength + 1];
         for (var i = 0; i < firstToken.length() - subTokenLength + 1 && i <= subTokenLength; i++) {
             var subTokenFirst = firstToken.substring(i, subTokenLength);
@@ -85,8 +109,11 @@ public class ProductController {
             return 0.0;
         }
 
-        var tokensFirst = GetTokens(first);
-        var tokensSecond = GetTokens(second);
+        var normalizeStringFirst = NormalizeSentence(first);
+        var normalizeStringSecond = NormalizeSentence(second);
+
+        var tokensFirst = GetTokens(normalizeStringFirst);
+        var tokensSecond = GetTokens(normalizeStringSecond);
 
         var fuzzyEqualsTokens = GetFuzzyEqualsTokens(tokensFirst, tokensSecond);
 
@@ -128,7 +155,7 @@ public class ProductController {
                     .streamAllBy().filter(product -> {
                         JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
                         double c = jaccardSimilarity.apply(q.toLowerCase(), product.getName().toLowerCase());
-                        System.out.println(q + " &&& " + product.getName() + " : " + c);
+                        System.out.println(c);
                         return c > 0.3;
                     });
             return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
@@ -138,29 +165,12 @@ public class ProductController {
                     .streamAllBy().filter(product -> product.getKeywords() != null && !product.getKeywords().isEmpty()).filter(product -> {
                         JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
                         double c = CalculateFuzzyEqualValue(q.toLowerCase(), product.getKeywords().toLowerCase());
-//                        double c = jaccardSimilarity.apply(q.toLowerCase(), product.getKeywords().toLowerCase());
-                        System.out.println(q + " &&& " + product.getKeywords() + " : " + c);
+                        System.out.println(c);
                         return c > 0.05;
                     });
             return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
         }
     }
-
-//    @GetMapping(FETCH_PRODUCT)
-//    public ProductDTO fetchProduct(@PathVariable String name) {
-//
-//        if (name.isEmpty()) {
-//            throw new BadRequestException("name cannot be empty");
-//        }
-//
-//        ProductEntity product = productRepository
-//                .findByName(name)
-//                .orElseThrow(() -> new NotFoundException(
-//                        String.format("Product with name \"%s\" doesn't exists", name))
-//                );
-//
-//        return productDTOFactory.makeProductDTO(product);
-
 
     @GetMapping(FETCH_PRODUCT_BY_ID)
     public ProductDTO fetchProductById(@PathVariable Long id) {
