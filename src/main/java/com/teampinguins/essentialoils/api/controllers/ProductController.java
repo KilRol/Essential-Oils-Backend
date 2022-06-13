@@ -5,6 +5,7 @@ import com.teampinguins.essentialoils.api.dto.ProductDTO;
 import com.teampinguins.essentialoils.api.exceptions.BadRequestException;
 import com.teampinguins.essentialoils.api.exceptions.NotFoundException;
 import com.teampinguins.essentialoils.api.factories.ProductDTOFactory;
+import com.teampinguins.essentialoils.api.services.JaccardSimilarity;
 import com.teampinguins.essentialoils.store.entities.ProductEntity;
 import com.teampinguins.essentialoils.store.repositories.ProductRepository;
 import lombok.AccessLevel;
@@ -32,22 +33,46 @@ public class ProductController {
     ProductDTOFactory productDTOFactory;
     ProductRepository productRepository;
 
+    @GetMapping("/api/products/search")
+    public List<ProductDTO> searchProduct(@RequestParam(value = "q", required = true) Optional<String> q,
+                                          @RequestParam(value = "type", required = true) int type) {
 
-    @GetMapping(FETCH_PRODUCT)
-    public ProductDTO fetchProduct(@PathVariable String name) {
-
-        if (name.isEmpty()) {
-            throw new BadRequestException("name cannot be empty");
+        if (type == 0) {
+            Stream<ProductEntity> productEntityStream = productRepository
+                    .streamAllBy().filter(product -> {
+                        JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
+                        double c = jaccardSimilarity.apply(q.get(), product.getName());
+                        System.out.println(c);
+                        return c > 0.5;
+                    });
+            return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
         }
 
-        ProductEntity product = productRepository
-                .findByName(name)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format("Product with name \"%s\" doesn't exists", name))
-                );
+        Stream<ProductEntity> productEntityStream = productRepository
+                .streamAllBy().filter(product -> {
+                    JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
+                    double c = jaccardSimilarity.apply(q.get(), product.getName() + product.getDescription() + product.getAroma() + product.getBenefits());
+                    System.out.println(c);
+                    return c > 0.25;
+                });
+        return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
 
-        return productDTOFactory.makeProductDTO(product);
     }
+//    @GetMapping(FETCH_PRODUCT)
+//    public ProductDTO fetchProduct(@PathVariable String name) {
+//
+//        if (name.isEmpty()) {
+//            throw new BadRequestException("name cannot be empty");
+//        }
+//
+//        ProductEntity product = productRepository
+//                .findByName(name)
+//                .orElseThrow(() -> new NotFoundException(
+//                        String.format("Product with name \"%s\" doesn't exists", name))
+//                );
+//
+//        return productDTOFactory.makeProductDTO(product);
+//    }
 
     @GetMapping(FETCH_ALL_PRODUCTS)
     public List<ProductDTO> fetchAllProduct(@RequestParam(value = "prefix_name", required = false) Optional<String> optionalPrefixName) {
