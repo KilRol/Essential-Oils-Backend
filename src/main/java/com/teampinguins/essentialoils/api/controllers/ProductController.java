@@ -29,33 +29,39 @@ public class ProductController {
     public static final String FETCH_PRODUCT = "/api/products/{name}";
     public static final String FETCH_ALL_PRODUCTS = "/api/products";
     public static final String DELETE_PRODUCT = "/api/products/{id}";
+    public static final String FETCH_PRODUCT_BY_ID = "/api/products/{id}";
     public static final String CREATE_OR_EDIT_PRODUCT = "/api/products/add";
     ProductDTOFactory productDTOFactory;
     ProductRepository productRepository;
 
     @GetMapping("/api/products/search")
-    public List<ProductDTO> searchProduct(@RequestParam(value = "q", required = true) Optional<String> q,
+    public List<ProductDTO> searchProduct(@RequestParam(value = "q", required = true) String q,
                                           @RequestParam(value = "type", required = true) int type) {
+
+        if (q.trim().isEmpty()) {
+            throw new BadRequestException("Empty query");
+        }
 
         if (type == 0) {
             Stream<ProductEntity> productEntityStream = productRepository
                     .streamAllBy().filter(product -> {
                         JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
-                        double c = jaccardSimilarity.apply(q.get(), product.getName());
-                        System.out.println(c);
-                        return c > 0.5;
+                        double c = jaccardSimilarity.apply(q.toLowerCase(), product.getName().toLowerCase());
+                        System.out.println(q + " &&& " + product.getName() + " : " + c);
+                        return c > 0.3;
+                    });
+            return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
+        } else {
+
+            Stream<ProductEntity> productEntityStream = productRepository
+                    .streamAllBy().filter(product -> product.getKeywords() != null && !product.getKeywords().isEmpty()).filter(product -> {
+                        JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
+                        double c = jaccardSimilarity.apply(q.toLowerCase(), product.getKeywords().toLowerCase());
+                        System.out.println(q + " &&& " + product.getKeywords() + " : " + c);
+                        return c > 0.05;
                     });
             return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
         }
-
-        Stream<ProductEntity> productEntityStream = productRepository
-                .streamAllBy().filter(product -> {
-                    JaccardSimilarity jaccardSimilarity = new JaccardSimilarity();
-                    double c = jaccardSimilarity.apply(q.get(), product.getName() + product.getDescription() + product.getAroma() + product.getBenefits());
-                    System.out.println(c);
-                    return c > 0.25;
-                });
-        return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());
 
     }
 //    @GetMapping(FETCH_PRODUCT)
@@ -72,7 +78,17 @@ public class ProductController {
 //                );
 //
 //        return productDTOFactory.makeProductDTO(product);
-//    }
+
+
+    @GetMapping(FETCH_PRODUCT_BY_ID)
+    public ProductDTO fetchProductById(@PathVariable Long id) {
+        ProductEntity product = productRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Product with id \"%s\" doesn't exists", id))
+                );
+        return productDTOFactory.makeProductDTO(product);
+    }
 
     @GetMapping(FETCH_ALL_PRODUCTS)
     public List<ProductDTO> fetchAllProduct(@RequestParam(value = "prefix_name", required = false) Optional<String> optionalPrefixName) {
@@ -93,6 +109,7 @@ public class ProductController {
         Optional<String> optionalProductName = Optional.ofNullable(prod.getName()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductUsage = Optional.ofNullable(prod.getUsage()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductAroma = Optional.ofNullable(prod.getAroma()).filter(str -> !str.trim().isEmpty());
+        Optional<String> optionalProductKeywords = Optional.ofNullable(prod.getKeywords()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductBenefits = Optional.ofNullable(prod.getBenefits()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductDescription = Optional.ofNullable(prod.getDescription()).filter(str -> !str.trim().isEmpty());
 
@@ -119,6 +136,7 @@ public class ProductController {
         optionalProductImg.ifPresent(product::setImg);
         optionalProductUsage.ifPresent(product::setUsage);
         optionalProductAroma.ifPresent(product::setAroma);
+        optionalProductKeywords.ifPresent(product::setKeywords);
         optionalProductBenefits.ifPresent(product::setBenefits);
         optionalProductDescription.ifPresent(product::setDescription);
 

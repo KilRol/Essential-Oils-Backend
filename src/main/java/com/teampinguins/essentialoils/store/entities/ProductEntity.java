@@ -43,6 +43,10 @@ public class ProductEntity {
     @Column(name = "benefits")
     private String benefits;
 
+    @Basic
+    @Column(name = "keywords")
+    private String keywords;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -16,4 +16,5 @@ public class ProductDTO {
     String aroma;
     String usage;
     String benefits;
+    String keywords;
 }

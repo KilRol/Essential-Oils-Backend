@@ -15,6 +15,7 @@ public class ProductDTOFactory {
                 .img(entity.getImg())
                 .benefits(entity.getBenefits())
                 .usage(entity.getUsage())
+                .keywords(entity.getKeywords())
                 .build();
     }
 }
