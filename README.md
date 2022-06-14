@@ -159,15 +159,15 @@
 
   ```JSON
     {
-      "name": "ProductName",          //required
-      "aroma": "ProductName",         //optional
-      "description": "ProductName",   //optional
-      "usage": "ProductName",         //optional
-      "benefits": "ProductName",      //optional
-      "warnings": "ProductName",      //optional
-      "keywords": "ProductName",      //optional
-      "img": "ProductName",           //optional
-      "id": "product_id"              //optional
+      "name": "product_name",                   //required
+      "aroma": "product_aroma",                 //optional
+      "description": "product_description",     //optional
+      "usage": "product_usage",                 //optional
+      "benefits": "product_benefits",           //optional
+      "warnings": "product_warnings",           //optional
+      "keywords": "product_keywords",           //optional
+      "img": "product_img",                     //optional
+      "id": "product_id"                        //optional
     }
   ```
 
