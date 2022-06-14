@@ -1,4 +1,4 @@
-package com.teampinguins.essentialoils.store.entities;
+package com.teampinguins.essentialoils.model.entities;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

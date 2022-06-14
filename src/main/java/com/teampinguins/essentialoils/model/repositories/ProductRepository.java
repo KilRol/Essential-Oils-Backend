@@ -1,6 +1,6 @@
-package com.teampinguins.essentialoils.store.repositories;
+package com.teampinguins.essentialoils.model.repositories;
 
-import com.teampinguins.essentialoils.store.entities.ProductEntity;
+import com.teampinguins.essentialoils.model.entities.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

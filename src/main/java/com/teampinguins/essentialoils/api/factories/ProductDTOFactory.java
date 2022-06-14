@@ -1,7 +1,7 @@
 package com.teampinguins.essentialoils.api.factories;
 
 import com.teampinguins.essentialoils.api.dto.ProductDTO;
-import com.teampinguins.essentialoils.store.entities.ProductEntity;
+import com.teampinguins.essentialoils.model.entities.ProductEntity;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -5,8 +5,8 @@ import com.teampinguins.essentialoils.api.dto.ProductDTO;
 import com.teampinguins.essentialoils.api.exceptions.BadRequestException;
 import com.teampinguins.essentialoils.api.exceptions.NotFoundException;
 import com.teampinguins.essentialoils.api.factories.ProductDTOFactory;
-import com.teampinguins.essentialoils.store.entities.ProductEntity;
-import com.teampinguins.essentialoils.store.repositories.ProductRepository;
+import com.teampinguins.essentialoils.model.entities.ProductEntity;
+import com.teampinguins.essentialoils.model.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
