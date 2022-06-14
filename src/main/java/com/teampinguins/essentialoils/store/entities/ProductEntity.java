@@ -2,6 +2,7 @@ package com.teampinguins.essentialoils.store.entities;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -27,8 +28,9 @@ public class ProductEntity {
     @Column(name = "aroma")
     private String aroma;
 
-    @Basic
+    @Lob
     @Column(name = "description")
+    @Type(type = "org.hibernate.type.TextType")
     private String description;
 
     @Basic
