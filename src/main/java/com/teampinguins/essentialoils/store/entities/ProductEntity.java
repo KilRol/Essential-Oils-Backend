@@ -28,24 +28,27 @@ public class ProductEntity {
     @Column(name = "aroma")
     private String aroma;
 
-    @Lob
-    @Column(name = "description")
-    @Type(type = "org.hibernate.type.TextType")
-    private String description;
-
-    @Basic
-    @Column(name = "usage")
-    private String usage;
-
     @Basic
     @Column(name = "img")
     private String img;
 
-    @Basic
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "description")
+    private String description;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "usage")
+    private String usage;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "benefits")
     private String benefits;
 
-    @Basic
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "keywords")
     private String keywords;
 
