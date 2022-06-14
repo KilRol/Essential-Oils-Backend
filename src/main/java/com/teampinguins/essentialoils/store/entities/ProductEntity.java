@@ -44,6 +44,11 @@ public class ProductEntity {
 
     @Lob
     @Type(type = "org.hibernate.type.TextType")
+    @Column(name = "warnings")
+    private String warnings;
+
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     @Column(name = "benefits")
     private String benefits;
 

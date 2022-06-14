@@ -17,4 +17,5 @@ public class ProductDTO {
     String usage;
     String benefits;
     String keywords;
+    String warnings;
 }

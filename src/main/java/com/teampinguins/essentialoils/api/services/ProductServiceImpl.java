@@ -85,6 +85,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<String> optionalProductAroma = Optional.ofNullable(productRequest.getAroma()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductKeywords = Optional.ofNullable(productRequest.getKeywords()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductBenefits = Optional.ofNullable(productRequest.getBenefits()).filter(str -> !str.trim().isEmpty());
+        Optional<String> optionalProductWarnings = Optional.ofNullable(productRequest.getWarnings()).filter(str -> !str.trim().isEmpty());
         Optional<String> optionalProductDescription = Optional.ofNullable(productRequest.getDescription()).filter(str -> !str.trim().isEmpty());
 
         boolean isCreate = optionalProductId.isEmpty();
@@ -111,6 +112,7 @@ public class ProductServiceImpl implements ProductService {
         optionalProductAroma.ifPresent(product::setAroma);
         optionalProductKeywords.ifPresent(product::setKeywords);
         optionalProductBenefits.ifPresent(product::setBenefits);
+        optionalProductWarnings.ifPresent(product::setWarnings);
         optionalProductDescription.ifPresent(product::setDescription);
 
         final ProductEntity savedProduct = productRepository.saveAndFlush(product);
