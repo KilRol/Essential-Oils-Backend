@@ -143,7 +143,7 @@ public class ProductServiceImpl implements ProductService {
                     TanimotoSimilarity tanimotoSimilarity = new TanimotoSimilarity(4, 2, 0.15);
                     double c = tanimotoSimilarity.CalculateFuzzyEqualValue(p.getKeywords().toLowerCase(), product.getKeywords().toLowerCase());
                     System.out.println(c);
-                    return c > 0.15;
+                    return c > 0.36;
                 });
         System.out.println("----------");
         return productEntityStream.map(productDTOFactory::makeProductDTO).collect(Collectors.toList());

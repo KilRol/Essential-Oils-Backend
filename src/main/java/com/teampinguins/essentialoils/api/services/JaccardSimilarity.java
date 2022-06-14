@@ -7,15 +7,6 @@ import java.util.Set;
 
 public class JaccardSimilarity implements SimilarityScore<Double> {
 
-    /**
-     * Calculates Jaccard Similarity of two set character sequence passed as
-     * input.
-     *
-     * @param left  first character sequence
-     * @param right second character sequence
-     * @return index
-     * @throws IllegalArgumentException if either String input {@code null}
-     */
     @Override
     public Double apply(CharSequence left, CharSequence right) {
         if (left == null || right == null) {
@@ -24,16 +15,6 @@ public class JaccardSimilarity implements SimilarityScore<Double> {
         return Math.round(calculateJaccardSimilarity(left, right) * 100d) / 100d;
     }
 
-    /**
-     * Calculates Jaccard Similarity of two character sequences passed as
-     * input. Does the calculation by identifying the union (characters in at
-     * least one of the two sets) of the two sets and intersection (characters
-     * which are present in set one which are present in set two)
-     *
-     * @param left  first character sequence
-     * @param right second character sequence
-     * @return index
-     */
     private Double calculateJaccardSimilarity(CharSequence left, CharSequence right) {
         Set<String> intersectionSet = new HashSet<String>();
         Set<String> unionSet = new HashSet<String>();
@@ -56,6 +37,6 @@ public class JaccardSimilarity implements SimilarityScore<Double> {
             }
             unionFilled = true;
         }
-        return Double.valueOf(intersectionSet.size()) / Double.valueOf(unionSet.size());
+        return (double) intersectionSet.size() / (double) unionSet.size();
     }
 }
